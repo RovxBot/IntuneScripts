@@ -1,5 +1,16 @@
 # Script by Sam Cooke.
 
+# Function to close running Microsoft Office and Microsoft Teams applications
+function Close-OfficeAndTeamsApplications {
+    $officeAndTeamsApps = Get-Process | Where-Object { $_.ProcessName -match "EXCEL|WINWORD|OUTLOOK|POWERPNT|MSACCESS|Teams" }
+    if ($officeAndTeamsApps.Count -gt 0) {
+        Write-Host "Closing Microsoft Office and Microsoft Teams applications..."
+        $officeAndTeamsApps | ForEach-Object { $_.CloseMainWindow() }
+        # Wait a moment to allow applications to close
+        Start-Sleep -Seconds 5
+    }
+}
+
 # Set the log file path
 $LogFilePath = "C:\script_log.txt"
 
@@ -10,8 +21,11 @@ Start-Transcript -Path $LogFilePath
 $Success = $true
 
 # Set the network path and user
-$NetworkPath = "H:\Documents" #swap with your share drive letter.
+$NetworkPath = "H:\Documents" # swap with your share drive letter.
 $User = $env:username
+
+# List of file extensions and folders to exclude from the copy operation
+$ExcludedItems = @(".SQLITE", ".log", "Login Data")  # Modify this list as needed
 
 # Check if the path already exists
 $PathExists = Test-Path -Path $NetworkPath
@@ -22,7 +36,8 @@ If ($PathExists) {
     Write-Host "Path already exists, Connected!"
 }
 else {
-    (New-Object -ComObject WScript.Network).MapNetworkDrive("H:", "\\<FILESERVER>\Users$\$User") #Enter file server name here, and drive letter.
+    Close-OfficeAndTeamsApplications # Close Office and Teams apps before mapping the drive
+    (New-Object -ComObject WScript.Network).MapNetworkDrive("H:", "\\<FILESERVER>\Users$\$User") # Enter file server name here, and drive letter.
     $PathExists = Test-Path -Path $NetworkPath
     if (-not $PathExists) {
         Write-Host "Failed to connect to the network drive. Please contact IT Support."
@@ -31,11 +46,26 @@ else {
 }
 
 if ($Success) {
-    $SourceDirectory = "H:\*" #Drive letter here
+    $SourceDirectory = "H:\*" # Drive letter here
     $DestinationDirectory = "C:\Users\$User\"
 
     try {
-        Copy-Item -Force -Recurse -Path $SourceDirectory -Destination $DestinationDirectory -Verbose
+        Close-OfficeAndTeamsApplications # Close Office and Teams apps before copying files
+
+        Get-ChildItem -Path $SourceDirectory -File -Recurse | ForEach-Object {
+            $sourceFile = $_.FullName
+            $destinationFile = Join-Path -Path $DestinationDirectory -ChildPath $_.Name
+
+            # Check if the file should be excluded from the copy operation
+            if ($ExcludedItems -notcontains [System.IO.Path]::GetExtension($sourceFile) -and
+                $sourceFile -notlike "H:\Documents\Passwords\*") {
+                Copy-Item -Path $sourceFile -Destination $destinationFile -Force
+                Write-Host "Copied: $sourceFile"
+            }
+            else {
+                Write-Host "Skipped: $sourceFile"
+            }
+        }
         Write-Host "Copy completed successfully"
     }
     catch {
