@@ -23,7 +23,7 @@ $Success = $true
 # Set the network path and user
 $NetworkPath = "H:\Documents" # swap with your share drive letter.
 $User = $env:username
-$FileServer = "Data1" # add your file server name here
+$FileServer = "<SERVER>" # add your file server name here
 
 # List of file extensions and folders to exclude from the copy operation
 $ExcludedItems = @(".SQLITE", ".log", "Login Data")  # Modify this list as needed
