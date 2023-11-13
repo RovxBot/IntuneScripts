@@ -23,6 +23,7 @@ $Success = $true
 # Set the network path and user
 $NetworkPath = "H:\Documents" # swap with your share drive letter.
 $User = $env:username
+$FileServer = "<SERVER>" # add your file server name here
 
 # List of file extensions and folders to exclude from the copy operation
 $ExcludedItems = @(".SQLITE", ".log", "Login Data")  # Modify this list as needed
@@ -37,7 +38,7 @@ If ($PathExists) {
 }
 else {
     Close-OfficeAndTeamsApplications # Close Office and Teams apps before mapping the drive
-    (New-Object -ComObject WScript.Network).MapNetworkDrive("H:", "\\<FILESERVER>\Users$\$User") # Enter file server name here, and drive letter.
+    (New-Object -ComObject WScript.Network).MapNetworkDrive("H:", "\\$FileServer\Users$\$User")
     $PathExists = Test-Path -Path $NetworkPath
     if (-not $PathExists) {
         Write-Host "Failed to connect to the network drive. Please contact IT Support."
