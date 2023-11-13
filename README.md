@@ -15,3 +15,9 @@ Client didnt have SharePoint running (Long story) but still wanted to deploy a d
 
 # SetRegion
 Intune lacks the ability to set and enforce language and region settings outside of initial Autopilot deployment. This script can be packaged as an app and deployed to devices to set language and region settings (Currently configured fro Australia)
+
+#DetectionScripts
+These detection scripts will find and remediate issues found. MicrosotStorePin will look for the MS store app and remove it from the task bar if it is found, Same with the Teams chat remediation.
+
+#HideTaskbarIcons
+
