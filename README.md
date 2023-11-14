@@ -7,6 +7,8 @@ User home drives where redirected to an onprem file share (As was the style at t
 
 The script will check for the connected network drive and log in if required, It will then copy the contents and drop it in the local user drive ready to sync to OneDrive.
 
+Update: Script has been overhauled to use robocopy and only copy required directories as I was running into issues with the script getting picked up by Defender for Endpoint while migrating passwords saved in browsers.
+
 # DeployPrinters
 Super simple one for connecting and removing network shared printers.
 
