@@ -22,7 +22,7 @@ A simple script for effortlessly connecting and removing network shared printers
 
 No SharePoint, no problem! For clients without SharePoint but with a thirst for a unified desktop look, this script, paired with a background image, seamlessly copies it to a specified location. Configure Intune to set that image as the desktop background, and voila!
 
-![Desktop Background](https://via.placeholder.com/800x400)
+![Desktop Background](https://github.com/RovxBot/IntuneScripts/blob/main/Images/DesktopGirl.jpg)
 
 ## SetRegion (In Development) 🌏
 
