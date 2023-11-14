@@ -40,7 +40,7 @@ Trim the taskbar fat with this script. Search, Chat, and Widgets—gone! Ideal f
 
 Stay updated with the latest holidays from data.gov.au. Schedule it to run periodically, and it'll submit the updates to Teams. A work in progress, but functional for a one-off run—just be aware it creates holidays instead of updating on subsequent runs.
 
-![Teams Voice Holidays](https://via.placeholder.com/800x400)
+![Teams Voice Holidays](https://github.com/RovxBot/IntuneScripts/blob/main/Images/CalanderGirl.jpg)
 
 ## Usage 🛠️
 
