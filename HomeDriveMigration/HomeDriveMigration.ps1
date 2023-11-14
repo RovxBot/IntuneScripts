@@ -1,58 +1,108 @@
-# Script by Sam Cooke.
+# Script written by Sam Cooke
 
-# Set the log file path
-$LogFilePath = "C:\script_log.txt"
-
-# Start capturing output to a log file
-Start-Transcript -Path $LogFilePath
-
-# Initialize a variable to track success
-$Success = $true
-
-# Set the network path and user
-$NetworkPath = "H:\Documents" #swap with your share drive letter.
-$User = $env:username
-
-# Check if the path already exists
-$PathExists = Test-Path -Path $NetworkPath
-
-Write-Host "Connecting to H:\ Drive"
-
-If ($PathExists) {
-    Write-Host "Path already exists, Connected!"
-}
-else {
-    (New-Object -ComObject WScript.Network).MapNetworkDrive("H:", "\\<FILESERVER>\Users$\$User") #Enter file server name here, and drive letter.
-    $PathExists = Test-Path -Path $NetworkPath
-    if (-not $PathExists) {
-        Write-Host "Failed to connect to the network drive. Please contact IT Support."
-        $Success = $false
+# Function to close running Microsoft Office and Microsoft Teams applications
+function Close-OfficeAndTeamsApplications {
+    $officeAndTeamsApps = Get-Process | Where-Object { $_.ProcessName -match "EXCEL|WINWORD|OUTLOOK|POWERPNT|MSACCESS|Teams" }
+    if ($officeAndTeamsApps.Count -gt 0) {
+        Write-Host "Closing Microsoft Office and Microsoft Teams applications..."
+        $officeAndTeamsApps | ForEach-Object { $_.CloseMainWindow() }
+        Start-Sleep -Seconds 5  # Wait a moment to allow applications to close
     }
 }
 
-if ($Success) {
-    $SourceDirectory = "H:\*" #Drive letter here
-    $DestinationDirectory = "C:\Users\$User\"
+# Function to connect to a network drive
+function Connect-ToNetworkDrive {
+    param (
+        [string]$NetworkPath,
+        [string]$FileServer,
+        [string]$User
+    )
 
-    try {
-        Copy-Item -Force -Recurse -Path $SourceDirectory -Destination $DestinationDirectory -Verbose
-        Write-Host "Copy completed successfully"
-    }
-    catch {
-        Write-Host "Error occurred during file copy: $_"
-        $Success = $false
+    Write-Host "Connecting to H:\ Drive"
+    if (-not (Test-Path -Path $NetworkPath)) {
+        Close-OfficeAndTeamsApplications # Close Office and Teams apps before mapping the drive
+        $driveMapping = (New-Object -ComObject WScript.Network).MapNetworkDrive("H:", "\\$FileServer\Users$\$User")
+        if (-not $driveMapping) {
+            Write-Host "Failed to connect to the network drive. Please contact IT Support."
+            $global:OperationSuccess = $false
+        }
+    } else {
+        Write-Host "Path already exists, Connected!"
     }
 }
 
-if ($Success) {
-    # Add the victory.txt file to C:\Temp. This is so we have something we can use as a detection rule for Intune deployment.
-    $VictoryFilePath = "C:\Temp\victory.txt"
-    "Victory!" | Out-File -FilePath $VictoryFilePath
-    Write-Host "victory.txt file added to C:\Temp"
+# Function to perform final actions upon successful execution
+function PerformFinalActions {
+    param (
+        [bool]$OperationSuccess
+    )
+
+    if ($OperationSuccess) {
+        # Add the victory.txt file to C:\Temp for detection rule
+        $VictoryFilePath = "C:\Temp\victory.txt"
+        "Victory!" | Out-File -FilePath $VictoryFilePath
+        Write-Host "victory.txt file added to C:\Temp"
+    }
+
+    Write-Host "Fin!"
+    Start-Sleep -Seconds 10
 }
 
-Write-Host "Fin!"
-Start-Sleep -Seconds 10
+# Function to execute the data migration process
+function ExecuteDataMigration {
+    # Set the log file path
+    $LogFilePath = "C:\Temp\script_log.txt"
+    # Start capturing output to a log file
+    Start-Transcript -Path $LogFilePath
 
-# Stop capturing output to the log file
-Stop-Transcript
+    # Set the network path and user
+    $NetworkPath = "H:\Documents"
+    $User = $env:username
+    $FileServer = "data1"
+
+    # Initialize a variable to track success
+    $global:OperationSuccess = $true
+
+    Close-OfficeAndTeamsApplications
+
+    Connect-ToNetworkDrive -NetworkPath $NetworkPath -FileServer $FileServer -User $User
+
+    if ($global:OperationSuccess) {
+        # Define source and destination directories
+        $DirectoryMappings = @{
+            "Contacts" = "C:\Users\$User\Contacts"
+            "Documents" = "C:\Users\$User\Documents"
+            "Desktop" = "C:\Users\$User\Desktop"
+            "Favorites" = "C:\Users\$User\Favorites"
+            "Links" = "C:\Users\$User\Links"
+            "Music" = "C:\Users\$User\Music"
+            "Pictures" = "C:\Users\$User\Pictures"
+            "Videos" = "C:\Users\$User\Videos"
+            "AppData" = "C:\Users\$User\AppData"
+        }
+
+        # List of folders to exclude from the copy operation
+        $ExcludedFolders = @("Folder1", "Folder2", "Folder3", "Foder4")
+
+        foreach ($entry in $DirectoryMappings.GetEnumerator()) {
+            $sourceDirectory = "H:\$($entry.Key)"
+            $destinationDirectory = $entry.Value
+
+            # Ensure the destination directory exists or create if not present
+            if (-not (Test-Path -Path $destinationDirectory -PathType Container)) {
+                New-Item -Path $destinationDirectory -ItemType Directory -Force | Out-Null
+            }
+
+            # Copy files maintaining the directory structure, excluding specified folders
+            robocopy $sourceDirectory $destinationDirectory /E /R:1 /W:1 /TEE /NP /XF $ExcludedFolders
+        }
+    }
+
+    PerformFinalActions -OperationSuccess $global:OperationSuccess
+
+    # Stop capturing output to the log file
+    Stop-Transcript
+}
+
+# Execute the data migration script
+ExecuteDataMigration

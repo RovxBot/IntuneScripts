@@ -12,3 +12,12 @@ Super simple one for connecting and removing network shared printers.
 
 # SetDesktopBackground
 Client didnt have SharePoint running (Long story) but still wanted to deploy a desktop background to all managed devices. So here is a simple script that when packaged together with a background image will copy the image from the temp deployment location to a location that you specify. Once this is done you can then create a configuration in Intune to set that image as the Desktop.
+
+# SetRegion
+Intune lacks the ability to set and enforce language and region settings outside of initial Autopilot deployment. This script can be packaged as an app and deployed to devices to set language and region settings (Currently configured fro Australia)
+
+# DetectionScripts
+These detection scripts will find and remediate issues found. MicrosotStorePin will look for the MS store app and remove it from the task bar if it is found, Same with the Teams chat remediation.
+
+# HideTaskbarIcons
+This script aims to remove the annoying default taskbar bloat - Search, Chat, and widgets. Most clients coming from Windows 10 have no used for them and they are just confusing to most users.
