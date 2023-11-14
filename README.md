@@ -21,4 +21,3 @@ These detection scripts will find and remediate issues found. MicrosotStorePin w
 
 # HideTaskbarIcons
 This script aims to remove the annoying default taskbar bloat - Search, Chat, and widgets. Most clients coming from Windows 10 have no used for them and they are just confusing to most users.
-
