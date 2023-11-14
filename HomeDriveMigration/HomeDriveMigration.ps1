@@ -1,3 +1,5 @@
+# Script written by Sam Cooke
+
 # Function to close running Microsoft Office and Microsoft Teams applications
 function Close-OfficeAndTeamsApplications {
     $officeAndTeamsApps = Get-Process | Where-Object { $_.ProcessName -match "EXCEL|WINWORD|OUTLOOK|POWERPNT|MSACCESS|Teams" }
@@ -8,76 +10,39 @@ function Close-OfficeAndTeamsApplications {
     }
 }
 
-# Set the log file path
-$LogFilePath = "C:\script_log.txt"
+# Function to connect to a network drive
+function Connect-ToNetworkDrive {
+    param (
+        [string]$NetworkPath,
+        [string]$FileServer,
+        [string]$User
+    )
 
-# Start capturing output to a log file
-Start-Transcript -Path $LogFilePath
-
-# Initialize a variable to track success
-$Success = $true
-
-# Set the network path and user
-$NetworkPath = "H:\Documents" # swap with your share drive letter.
-$User = $env:username
-$FileServer = "<SERVER>" # add your file server name here
-
-# List of file extensions and folders to exclude from the copy operation
-$ExcludedItems = @(".SQLITE", ".log", "Login Data")  # Modify this list as needed
-
-# Check if the path already exists
-$PathExists = Test-Path -Path $NetworkPath
-
-Write-Host "Connecting to H:\ Drive"
-
-If ($PathExists) {
-    Write-Host "Path already exists, Connected!"
-}
-else {
-    Close-OfficeAndTeamsApplications # Close Office and Teams apps before mapping the drive
-    (New-Object -ComObject WScript.Network).MapNetworkDrive("H:", "\\$FileServer\Users$\$User")
-    $PathExists = Test-Path -Path $NetworkPath
-    if (-not $PathExists) {
-        Write-Host "Failed to connect to the network drive. Please contact IT Support."
-        $Success = $false
-    }
-}
-
-if ($Success) {
-    $SourceDirectory = "H:\*" # Drive letter here
-    $DestinationDirectory = "C:\Users\$User\"
-
-    try {
-        Close-OfficeAndTeamsApplications # Close Office and Teams apps before copying files
-
-        Get-ChildItem -Path $SourceDirectory -File -Recurse | ForEach-Object {
-            $sourceFile = $_.FullName
-            $destinationFile = Join-Path -Path $DestinationDirectory -ChildPath $_.Name
-
-            # Check if the file should be excluded from the copy operation
-            if ($ExcludedItems -notcontains [System.IO.Path]::GetExtension($sourceFile) -and
-                $sourceFile -notlike "H:\Documents\Passwords\*") {
-                Copy-Item -Path $sourceFile -Destination $destinationFile -Force
-                Write-Host "Copied: $sourceFile"
-            }
-            else {
-                Write-Host "Skipped: $sourceFile"
-            }
+    Write-Host "Connecting to H:\ Drive"
+    if (-not (Test-Path -Path $NetworkPath)) {
+        Close-OfficeAndTeamsApplications # Close Office and Teams apps before mapping the drive
+        $driveMapping = (New-Object -ComObject WScript.Network).MapNetworkDrive("H:", "\\$FileServer\Users$\$User")
+        if (-not $driveMapping) {
+            Write-Host "Failed to connect to the network drive. Please contact IT Support."
+            $global:OperationSuccess = $false
         }
-        Write-Host "Copy completed successfully"
-    }
-    catch {
-        Write-Host "Error occurred during file copy: $_"
-        $Success = $false
+    } else {
+        Write-Host "Path already exists, Connected!"
     }
 }
 
-if ($Success) {
-    # Add the victory.txt file to C:\Temp. This is so we have something we can use as a detection rule for Intune deployment.
-    $VictoryFilePath = "C:\Temp\victory.txt"
-    "Victory!" | Out-File -FilePath $VictoryFilePath
-    Write-Host "victory.txt file added to C:\Temp"
-}
+# Function to perform final actions upon successful execution
+function PerformFinalActions {
+    param (
+        [bool]$OperationSuccess
+    )
+
+    if ($OperationSuccess) {
+        # Add the victory.txt file to C:\Temp for detection rule
+        $VictoryFilePath = "C:\Temp\victory.txt"
+        "Victory!" | Out-File -FilePath $VictoryFilePath
+        Write-Host "victory.txt file added to C:\Temp"
+    }
 
     Write-Host "Fin!"
     Start-Sleep -Seconds 10
@@ -117,7 +82,7 @@ function ExecuteDataMigration {
         }
 
         # List of folders to exclude from the copy operation
-        $ExcludedFolders = @("Folder4", "Folder3", "Folder2", "Folder1")
+        $ExcludedFolders = @("Folder1", "Folder2", "Folder3", "Foder4")
 
         foreach ($entry in $DirectoryMappings.GetEnumerator()) {
             $sourceDirectory = "H:\$($entry.Key)"
