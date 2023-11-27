@@ -1,25 +1,55 @@
-# IntuneScripts
-Just a bunch of my helpful Intune scripts. Like always if you use any of these you do at your own risk, always test the random stuff you find on the internet first before deploying to production.
+# IntuneScripts 🚀
 
+Welcome to my IntuneScripts repository! Here, you'll find a curated collection of scripts designed to make your Intune experience smoother. Remember, though: deploy at your own risk and always give things a test run before unleashing them in production.
 
-# HomeDriveMigration
-User home drives where redirected to an onprem file share (As was the style at them time). So we needed to migrate users data from the home drive to local in an easy way that the end user could kick off if required.
+## Disclaimer ⚠️
 
-The script will check for the connected network drive and log in if required, It will then copy the contents and drop it in the local user drive ready to sync to OneDrive.
+While these scripts are crafted to be helpful, it's crucial to exercise caution. Test rigorously before deploying to ensure a seamless experience. Some scripts are still in development, so expect the unexpected.
 
-Update: Script has been overhauled to use robocopy and only copy required directories as I was running into issues with the script getting picked up by Defender for Endpoint while migrating passwords saved in browsers.
+## HomeDriveMigration 🏠
 
-# DeployPrinters
-Super simple one for connecting and removing network shared printers.
+User home drives were once redirected to an on-prem file share (a blast from the past). This script elegantly migrates user data from the home drive to the local drive, giving end users the power to initiate if needed.
 
-# SetDesktopBackground
-Client didnt have SharePoint running (Long story) but still wanted to deploy a desktop background to all managed devices. So here is a simple script that when packaged together with a background image will copy the image from the temp deployment location to a location that you specify. Once this is done you can then create a configuration in Intune to set that image as the Desktop.
+### Update ✨
 
-# SetRegion
-Intune lacks the ability to set and enforce language and region settings outside of initial Autopilot deployment. This script can be packaged as an app and deployed to devices to set language and region settings (Currently configured fro Australia)
+Overhauled using Robocopy, it selectively copies user folders. This change, prompted by Defender for Endpoint issues with browser passwords, makes the script modular. Customize folder exclusions and inclusions with ease.
 
-# DetectionScripts
-These detection scripts will find and remediate issues found. MicrosotStorePin will look for the MS store app and remove it from the task bar if it is found, Same with the Teams chat remediation.
+## DeployPrinters 🖨️
 
-# HideTaskbarIcons
-This script aims to remove the annoying default taskbar bloat - Search, Chat, and widgets. Most clients coming from Windows 10 have no used for them and they are just confusing to most users.
+A simple script for effortlessly connecting and removing network shared printers.
+
+### Update ✨
+
+Added a second script that can be added as a pre-requisit install to deploy print drivers.
+
+## SetDesktopBackground 🌄
+
+No SharePoint, no problem! For clients without SharePoint but with a thirst for a unified desktop look, this script, paired with a background image, seamlessly copies it to a specified location. Configure Intune to set that image as the desktop background, and voila!
+
+![Desktop Background](https://github.com/RovxBot/IntuneScripts/blob/main/Images/DesktopGirl.jpg)
+
+## SetRegion (In Development) 🌏
+
+Intune struggles with language and region settings post-Autopilot. Enter this script, currently geared for Australia. Package it as an app, deploy to devices, and watch as language and region settings fall into line.
+
+## DetectionScripts 🔍
+
+These scripts play detective and fix issues on the fly. `MicrosoftStorePin` removes the Microsoft Store app from the taskbar, and Teams chat remediation does the same for Teams chat.
+
+## HideTaskbarIcons 🚫
+
+Trim the taskbar fat with this script. Search, Chat, and Widgets—gone! Ideal for clients transitioning from Windows 10 who find these features more confusing than helpful.
+
+## TeamsVoiceHolidays (In Development) 📅
+
+Stay updated with the latest holidays from data.gov.au. Schedule it to run periodically, and it'll submit the updates to Teams. A work in progress, but functional for a one-off run—just be aware it creates holidays instead of updating on subsequent runs.
+
+![Teams Voice Holidays](https://github.com/RovxBot/IntuneScripts/blob/main/Images/CalanderGirl.jpg)
+
+## DeployFonts 
+
+Package and deploy fonts with ease. These scripts packaged along with a Fonts folder will deploy and install the whole folder of fonts to your end users.
+
+## Usage 🛠️
+
+I typically deploy many of my scripts as packaged `.intunewin` applications. Exception: detection scripts, deployed via remediation scripts in Intune, and TeamsVoiceHolidays, run locally on my PC.
