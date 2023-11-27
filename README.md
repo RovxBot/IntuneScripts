@@ -50,6 +50,7 @@ Stay updated with the latest holidays from data.gov.au. Schedule it to run perio
 
 Package and deploy fonts with ease. These scripts packaged along with a Fonts folder will deploy and install the whole folder of fonts to your end users.
 
+
 ## Usage 🛠️
 
 I typically deploy many of my scripts as packaged `.intunewin` applications. Exception: detection scripts, deployed via remediation scripts in Intune, and TeamsVoiceHolidays, run locally on my PC.
