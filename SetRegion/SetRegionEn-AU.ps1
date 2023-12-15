@@ -1,35 +1,83 @@
-#Install BurntToast module
-Install-Module -Name BurntToast
-
 # Set the system culture to English Australia silently
-Set-Culture en-AU
+try {
+    Set-Culture en-AU -ErrorAction Stop
+}
+catch {
+    Write-Host "Failed to set system culture to English Australia. Error: $_"
+    exit 1
+}
 
 # Set the system locale to English United States silently
-Set-WinSystemLocale -SystemLocale en-US
+try {
+    Set-WinSystemLocale -SystemLocale en-US -ErrorAction Stop
+}
+catch {
+    Write-Host "Failed to set system locale to English United States. Error: $_"
+    exit 1
+}
 
 # Set the UI language override to English United States silently
-Set-WinUILanguageOverride -Language en-US
+try {
+    Set-WinUILanguageOverride -Language en-US -ErrorAction Stop
+}
+catch {
+    Write-Host "Failed to set UI language override to English United States. Error: $_"
+    exit 1
+}
 
 # Set the user language list to English Australia silently
-Set-WinUserLanguageList en-AU -Force
+try {
+    Set-WinUserLanguageList en-AU -Force -ErrorAction Stop
+}
+catch {
+    Write-Host "Failed to set user language list to English Australia. Error: $_"
+    exit 1
+}
 
 # Set the home location to GeoID 12 (Australia) silently
-Set-WinHomeLocation -GeoId 12
+try {
+    Set-WinHomeLocation -GeoId 12 -ErrorAction Stop
+}
+catch {
+    Write-Host "Failed to set home location to Australia. Error: $_"
+    exit 1
+}
 
 # Create a detection file in the user's profile directory
-$filePath = [System.IO.Path]::Combine($env:USERPROFILE, "LanguageSettingsApplied.txt")
-New-Item -ItemType File -Path $filePath -Force
+$detectionFilePath = [System.IO.Path]::Combine($env:USERPROFILE, "LanguageSettingsApplied.txt")
+try {
+    New-Item -ItemType File -Path $detectionFilePath -Force -ErrorAction Stop
+}
+catch {
+    Write-Host "Failed to create detection file. Error: $_"
+    exit 1
+}
 
-# Register a scheduled task to display a notification and restart
-$action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -Command "New-BurntToastNotification -Text \"Language and region settings have been updated. Please restart your computer.\" -AppLogo 'C:\path\to\your\logo.png'"; Restart-Computer -Force'
-$trigger = New-ScheduledTaskTrigger -AtStartup
-Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "RestartNotificationTask" -Force
+# Inform the user that language and region settings have been updated
+[void][System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+$confirmation = [System.Windows.Forms.MessageBox]::Show("Language and region settings have been updated. Do you want to restart your computer now?", "Settings Updated", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Information)
 
-# Pause the script for a moment to allow the task to be registered
-Start-Sleep -Seconds 5
+if ($confirmation -eq 'Yes') {
+    # Register a scheduled task to restart the computer
+    try {
+        $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-Command Restart-Computer -Force'
+        $trigger = New-ScheduledTaskTrigger -AtStartup
+        Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "RestartTask" -Force
+    }
+    catch {
+        Write-Host "Failed to register restart task. Error: $_"
+        exit 1
+    }
 
-# Inform the user that a notification will be displayed shortly, prompting them to restart
-Write-Host "Language and region settings have been silently enforced. A notification will be displayed shortly, informing you to restart your computer. Please save your work, and thank you for your cooperation."
+    # Pause the script for a moment to allow the task to be registered
+    Start-Sleep -Seconds 5
+    Write-Host "Your computer will restart shortly. Please save your work."
+}
+else {
+    Write-Host "You chose not to restart your computer. Please restart at your earliest convenience."
+}
 
-# Pause the script for 10 seconds before exiting (optional)
-Start-Sleep -Seconds 10
+# Logging
+$logPath = [System.IO.Path]::Combine($env:USERPROFILE, "ScriptLog.txt")
+$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+Add-Content -Path $logPath -Value "$timestamp - Script executed successfully."
