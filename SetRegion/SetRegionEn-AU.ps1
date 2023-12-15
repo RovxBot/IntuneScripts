@@ -9,7 +9,7 @@ catch {
 
 # Set the system locale to English United States silently
 try {
-    Set-WinSystemLocale -SystemLocale en-US -ErrorAction Stop
+    Set-WinSystemLocale -SystemLocale en-au -ErrorAction Stop
 }
 catch {
     Write-Host "Failed to set system locale to English United States. Error: $_"
