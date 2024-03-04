@@ -1,5 +1,5 @@
 # Path to the default wallpaper (full path with extension)
-$defaultWallpaperPath = "C:\Path\To\Default\Wallpaper.jpg"
+$defaultWallpaperPath = "C:\PathTo\Wallpaper\Wallpaper.png"
 
 # Use the Windows API to set the desktop wallpaper
 Add-Type -TypeDefinition @"
