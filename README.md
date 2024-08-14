@@ -6,7 +6,7 @@ Welcome to my Intune scripts repository! Here, you'll find a curated collection 
 
 While these scripts are crafted to be helpful, it's crucial to exercise caution. Test rigorously before deploying to ensure a seamless experience. Some scripts are still in development, so expect the unexpected.
 
-##CollectAppGUIDs
+## CollectAppGUIDs
 
 Use this script to collect all the GUIDs of applications installed on you device. Handy for detection and uninstall commands for deployed apps.
 
