@@ -1,10 +1,14 @@
 # IntuneScripts 🚀
 
-Welcome to my IntuneScripts repository! Here, you'll find a curated collection of scripts designed to make your Intune experience smoother. Remember, though: deploy at your own risk and always give things a test run before unleashing them in production.
+Welcome to my Intune scripts repository! Here, you'll find a curated collection of scripts designed to make your Intune experience smoother. Remember, though: deploy at your own risk and always give things a test run before unleashing them in production.
 
 ## Disclaimer ⚠️
 
 While these scripts are crafted to be helpful, it's crucial to exercise caution. Test rigorously before deploying to ensure a seamless experience. Some scripts are still in development, so expect the unexpected.
+
+##CollectAppGUIDs
+
+Use this script to collect all the GUIDs of applications installed on you device. Handy for detection and uninstall commands for deployed apps.
 
 ## HomeDriveMigration 🏠
 
@@ -26,8 +30,6 @@ Added a second script that can be added as a pre-requisit install to deploy prin
 
 No SharePoint, no problem! For clients without SharePoint but with a thirst for a unified desktop look, this script, paired with a background image, seamlessly copies it to a specified location. Configure Intune to set that image as the desktop background, and voila!
 
-![Desktop Background](https://github.com/RovxBot/IntuneScripts/blob/main/Images/DesktopGirl.jpg)
-
 ## SetRegion (In Development) 🌏
 
 Intune struggles with language and region settings post-Autopilot. Enter this script, currently geared for Australia. Package it as an app, deploy to devices, and watch as language and region settings fall into line.
@@ -43,8 +45,6 @@ Trim the taskbar fat with this script. Search, Chat, and Widgets—gone! Ideal f
 ## TeamsVoiceHolidays (In Development) 📅
 
 Stay updated with the latest holidays from data.gov.au. Schedule it to run periodically, and it'll submit the updates to Teams. A work in progress, but functional for a one-off run—just be aware it creates holidays instead of updating on subsequent runs.
-
-![Teams Voice Holidays](https://github.com/RovxBot/IntuneScripts/blob/main/Images/CalanderGirl.jpg)
 
 ## DeployFonts 
 
