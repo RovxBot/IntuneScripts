@@ -34,6 +34,10 @@ No SharePoint, no problem! For clients without SharePoint but with a thirst for 
 
 Intune struggles with language and region settings post-Autopilot. Enter this script, currently geared for Australia. Package it as an app, deploy to devices, and watch as language and region settings fall into line.
 
+### Update
+
+Going to bin this in favour of an available app option for users to install if they wish to change language and region settings. Found here: https://github.com/okieselbach/Intune/tree/master/Win32/SetLanguage-de-DE
+
 ## DetectionScripts 🔍
 
 These scripts play detective and fix issues on the fly. `MicrosoftStorePin` removes the Microsoft Store app from the taskbar, and Teams chat remediation does the same for Teams chat.
@@ -50,6 +54,9 @@ Stay updated with the latest holidays from data.gov.au. Schedule it to run perio
 
 Package and deploy fonts with ease. These scripts packaged along with a Fonts folder will deploy and install the whole folder of fonts to your end users.
 
+## Bitlocker key backup
+
+Backup Bitlocker keys from before you migrated to hybrid / Intune managed devices to Azure. Deploy as a script running as SYSTEM.
 
 ## Usage 🛠️
 
